@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang='ja'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content="device-width, initial-scale=1.0">
+    <meta http-equiv='X-UA-Compatible' content="ie=edge">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>Receipt combination</title>
+    <link rel='stylesheet' href="./static/stylesheet.css">
+
+</head>
+<body>
+    <header> 
+        <a class='header-logo' href="#">レシート組み合わせアプリ</a>
+    </header>
+
+    <div class='main'>    
+        <h2> 条件を満たし、古いレシートを優先した組み合わせを教えてくれます</h2>
+        <div class='p'>
+        各項目を入力してください<br>
+        Each：各レシートの金額を古い順に入力してください。（例：1481 2659 8452 ...）<br>
+        Total：欲しい合計金額（1万円以上なら"10000"を入力）<br>
+        ignore：探索範囲の決定（50を入力した場合、Totalから+50円の範囲で探します）</div>
+        <form method='POST' enctype="multipart/form-data">
+            <input class='file_choose' type="txt" name="w" placeholder="Each">
+	    <input class='file_choose' type="txt" name="W" placeholder="Total">
+            <input class='file_choose' type="txt" name="A" placeholder="ignore">
+            <input class='btn' value="submit!" type="submit">
+        </form>
+        
+	<div class='answer'>{{answer}}
+
+        <table>
+		<thead>
+			<tr>
+				{% for i in header: %}
+				<th scope="col">{{ i }}</th>
+				{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for i in record: %}
+			<tr>
+				{% for j in i: %}
+				<td>{{ j }}</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+        </div>
+    </div>
+</body>
+</html>
