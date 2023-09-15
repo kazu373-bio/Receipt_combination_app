@@ -16,15 +16,21 @@
     </header>
 
     <div class='main'>    
-        <h2> 条件を満たし、古いレシートを優先した組み合わせを教えてくれます</h2>
+	<h2> 条件を満たし、古いレシートを優先した組み合わせを教えてくれます</h2>
         <div class='p'>
         各項目を入力してください<br>
         Each：各レシートの金額を古い順に半角スペースを入れて入力してください。（例：1481 2659 8452 ...）<br>
         ignore：探索範囲の決定（50を入力した場合、Totalから+50円の範囲で探します）</div>
         <form method='POST' enctype="multipart/form-data">
-            <input class='file_choose' type="txt" name="w" placeholder="Each"/><br>
-            <input class='file_choose' type="txt" name="A" placeholder="ignore"/><br>
-            <input class='btn' value="submit!" type="submit"/>
+		<p>
+			<input class='file_choose' type="txt" name="w" placeholder="Each"/>
+		</p>
+		<p>
+			<input class='file_choose' type="txt" name="A" placeholder="ignore"/>
+		</p>
+		<p>
+			<input class='btn' value="submit!" type="submit"/>
+		</p>
         </form>
         
 	<div class='answer'>{{answer}}
