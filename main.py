@@ -12,6 +12,7 @@ from flask import Flask, request, redirect, render_template, flash, send_from_di
 import pandas as pd
 from mip import Model, xsum, maximize, BINARY
 from itertools import count
+import math
 
 app = Flask(__name__)
 
@@ -23,11 +24,11 @@ def upload_file():
     
     if request.method == 'POST':
         w = request.form["w"]
-        W = request.form["W"]
+        #W = request.form["W"]
         A = request.form["A"]
         
         A = int(A)
-        W = int(W)
+        #W = int(W)
         w = w.split()
         w = [int(n) for n in w]
         print("入力レシートの合計:{}".format(sum(w)))
@@ -35,30 +36,42 @@ def upload_file():
         v.reverse()
         
         r=range(len(w))
-        for num in count():
-            if A>=0:
-                m=Model("knapsack")
-                m.infeas_tol=10**-11 #MIPの最低演算桁を下げる
-                x=[m.add_var(var_type=BINARY) for i in r]
-                m.objective=maximize(xsum(v[i]*x[i] for i in r))
-                m+=xsum(w[i]*x[i] for i in r)>=W
-                m+=xsum(w[i]*x[i] for i in r)<=W+A
-                m.optimize()
-            else:
-                break
-            if None!=x[0].x:
-                selected=[i for i in r if x[i].x>=0.99]
-                result1=sum([w[i] for i in selected])
-                result2=[w[i] for i in selected]
-                result3=[w.index(w[i]) for i in selected]
-                result4=sum([v[i] for i in selected])
+
+        W_max=math.floor(sum(w)/10000) #合計の最大万単位
+        if W_max==0:
+            ans="入力レシートの合計が1万円以下です。"
+            return render_template("index.html",answer=ans)
+        else:
+            W_list=list(range(W_max))
+            W_list=[(n+1)*10000 for n in W_list]
+            print(W_list)
+
+        for W in W_list:
+            A_c=A
+            for num in count():
+                if A_c>=0:
+                    m=Model("knapsack")
+                    m.infeas_tol=10**-11 #MIPの最低演算桁を下げる
+                    x=[m.add_var(var_type=BINARY) for i in r]
+                    m.objective=maximize(xsum(v[i]*x[i] for i in r))
+                    m+=xsum(w[i]*x[i] for i in r)>=W
+                    m+=xsum(w[i]*x[i] for i in r)<=W+A_c
+                    m.optimize()
+                else:
+                    break
+                if None!=x[0].x:
+                    selected=[i for i in r if x[i].x>=0.99]
+                    result1=sum([w[i] for i in selected])
+                    result2=[w[i] for i in selected]
+                    result3=[w.index(w[i]) for i in selected]
+                    result4=sum([v[i] for i in selected])
+                    
+                    df_answer = df_answer.append({"Total":result1,"Each":result2,"number":result3},ignore_index=True)
                 
-                df_answer = df_answer.append({"Total":result1,"Each":result2,"number":result3},ignore_index=True)
-                
-                
-            else:
-                break
-            A=result1-W-1
+                else:
+                    print("{a}の解答数:{b}".format(a=W,b=num))
+                    break
+                A_c=result1-W-1
 
         print("解答数:{}".format(num))
         if num==0:
