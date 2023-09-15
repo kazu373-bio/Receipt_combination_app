@@ -45,7 +45,7 @@ def upload_file():
             W_list=list(range(W_max))
             W_list=[(n+1)*10000 for n in W_list]
             print(W_list)
-
+            answer_num=0
         for W in W_list:
             A_c=A
             for num in count():
@@ -67,14 +67,14 @@ def upload_file():
                     result4=sum([v[i] for i in selected])
                     
                     df_answer = df_answer.append({"Total":result1,"Each":result2,"number":result3},ignore_index=True)
-                
+                    answer_num+=1
                 else:
                     print("{a}の解答数:{b}".format(a=W,b=num))
                     break
                 A_c=result1-W-1
 
         print("解答数:{}".format(num))
-        if num==0:
+        if answer_num==0:
             ans="妥協金額を増やしてください。\nまたは、入力レシートの合計が目標金額以下の可能性があります。"
             return render_template("index.html",answer=ans)
         
